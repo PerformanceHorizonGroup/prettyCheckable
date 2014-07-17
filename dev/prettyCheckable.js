@@ -77,20 +77,12 @@
                 ko.utils.triggerEvent(input[0], 'click');
 
             } else {
-
-                if (input.prop('checked')) {
-
-                    input.prop('checked', false).change();
-
-                } else {
-
-                    input.prop('checked', true).change();
-
-                }
+            	
+            	input.prop('checked', !input.prop('checked'));
+            	
+                input.change();
 
             }
-
-            fakeCheckable.toggleClass('checked');
 
         });
 
@@ -101,6 +93,12 @@
                 $(this).click();
 
             }
+
+        });
+
+        element.find('input').on('change.'+pluginName, function(e){	// add pluginName namespace for the event so it's easier to remove
+
+       		$(this).data( dataPlugin ).updateChecked();
 
         });
 
@@ -182,9 +180,10 @@
 
         },
 
-        check: function () {
-
-            if ($(this.element).prop('type') === 'radio') {
+        updateChecked: function () {
+        	var checked=$(this.element).prop('checked');
+ 
+             if ($(this.element).prop('type') === 'radio') {
 
                 $('input[name="' + $(this.element).attr('name') + '"]').each(function(index, el){
 
@@ -194,13 +193,22 @@
 
             }
 
-            $(this.element).prop('checked', true).attr('checked', true).parent().find('a:first').addClass('checked');
+            $(this.element).parent().find('a:first')[checked?'addClass':'removeClass']('checked');
+        },
+
+        check: function () {
+        	
+        	$(this.element).prop('checked', true);
+        	
+        	this.updateChecked();
 
         },
 
         uncheck: function () {
 
-            $(this.element).prop('checked', false).attr('checked', false).parent().find('a:first').removeClass('checked');
+        	$(this.element).prop('checked', false);
+        	
+        	this.updateChecked();
 
         },
 
